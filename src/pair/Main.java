@@ -7,7 +7,8 @@ public class Main {
         final Pair<String> secondStringPair = new Pair<>("Hello", "World");
         final Pair<Integer> integerPair = new Pair<>(1, 2);
 
-        final boolean areEqualPairs1 = PairUtil.Equals(firstStringPair, secondStringPair);
+
+        final boolean areEqualPairs1 = PairUtil.equals(firstStringPair, secondStringPair);
         System.out.println("First  pair: " + firstStringPair.getFirst() + " " + firstStringPair.getSecond()
                 + ", Second  pair: " + secondStringPair.getFirst() + " " + secondStringPair.getSecond());
 
@@ -16,7 +17,7 @@ public class Main {
 
         System.out.println();
 
-        final boolean areEqualPairs2 = PairUtil.Equals(firstStringPair, integerPair);
+        final boolean areEqualPairs2 = PairUtil.equals(firstStringPair, integerPair);
         System.out.println("First  pair: " + firstStringPair.getFirst() + " " + firstStringPair.getSecond() +
                 ", Second pair: " + integerPair.getFirst() + " " + integerPair.getSecond());
 
@@ -26,12 +27,12 @@ public class Main {
         System.out.println("----------------------------------------");
 
         System.out.println("Pair before swap: " + firstStringPair.getFirst() + " " + secondStringPair.getSecond());
-        PairUtil.Swap(firstStringPair);
+        PairUtil.swap(firstStringPair);
         System.out.println("pair after swap: " + firstStringPair.getFirst() + " " + secondStringPair.getSecond());
 
         System.out.println("----------------------------------------");
 
-        final Pair<String> copiedPair = PairUtil.Copy(secondStringPair);
+        final Pair<String> copiedPair = PairUtil.copy(secondStringPair);
         System.out.println("Original pair: " + secondStringPair.getFirst() + " " + secondStringPair.getSecond());
         System.out.println("Copied  pair: " + copiedPair.getFirst() + " " + copiedPair.getSecond());
     }
