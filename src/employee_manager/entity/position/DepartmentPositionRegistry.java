@@ -48,16 +48,10 @@ public final class DepartmentPositionRegistry {
         return Collections.unmodifiableMap(DEPARTMENT_MAP);
     }
     public static Map<Integer,Department> getDepartmentMapExceptDepartmentWhichAlreadyHaveEmployee(final Employee employee){
-        return Collections.unmodifiableMap(
-                DEPARTMENT_MAP.entrySet().stream()
-                        .filter(entry ->
-                                !entry.getValue().getName().equals(employee.getPosition().getDepartment()))
-                        .collect(
-                                HashMap::new,
-                                (map, entry) -> map.put(entry.getKey(), entry.getValue()),
-                                HashMap::putAll
-                        )
-        );
+        final Map<Integer, Department> departmentMap = new TreeMap<>(DEPARTMENT_MAP);
+        departmentMap.entrySet()
+                .removeIf(entry -> entry.getValue().getName().equals(employee.getPosition().getDepartment()));
+        return Collections.unmodifiableMap(departmentMap);
     }
     public static  Map<Integer,Position> getPositionMapByDepartment(final Department department){
         return Collections.unmodifiableMap(POSITION_MAP_BY_DEPARTMENT.get(department));
