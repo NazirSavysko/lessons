@@ -5,6 +5,7 @@ import employee_manager.entity.position.Position;
 import java.time.LocalDate;
 
 public final class Employee {
+    private static int maxId = 0;
     private final int id;
     private final String name;
     private final String surname;
@@ -14,6 +15,7 @@ public final class Employee {
     private LocalDate dateOfTheLastSalaryChange;
 
     public Employee(int id, String name, String surname, LocalDate dateOfEmployment, Position position, double salary, LocalDate dateOfTheLastSalaryChange) {
+        if (maxId < id) maxId = id;
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -22,9 +24,17 @@ public final class Employee {
         this.salary = salary;
         this.dateOfTheLastSalaryChange = dateOfTheLastSalaryChange;
     }
+    public Employee( String name, String surname, Position position, double salary) {
+        this(++maxId, name, surname,LocalDate.now() , position, salary, LocalDate.now());
+    }
+
+    public  int getId() {
+        return id;
+    }
 
     public double getSalary() {
         return salary;
+
     }
 
     public void setSalary(double salary) {
@@ -39,9 +49,6 @@ public final class Employee {
         this.position = position;
     }
 
-    public LocalDate getDateOfTheLastSalaryChange() {
-        return dateOfTheLastSalaryChange;
-    }
 
     public void setDateOfTheLastSalaryChange(LocalDate dateOfTheLastSalaryChange) {
         this.dateOfTheLastSalaryChange = dateOfTheLastSalaryChange;
