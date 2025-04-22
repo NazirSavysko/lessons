@@ -15,8 +15,8 @@ public final class Employee {
     private LocalDate dateOfTheLastSalaryChange;
 
     public Employee(int id, String name, String surname, LocalDate dateOfEmployment, Position position, double salary, LocalDate dateOfTheLastSalaryChange) {
-        if (maxId < id) maxId = id;
         this.id = id;
+        if (maxId < id) maxId = id;
         this.name = name;
         this.surname = surname;
         this.dateOfEmployment = dateOfEmployment;

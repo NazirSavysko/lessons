@@ -6,7 +6,7 @@ import employee_manager.entity.position.Position;
 import java.math.BigDecimal;
 
 public final class TeamLead implements Position {
-    private static final String NAME = "Junior Developer";
+    private static final String NAME = "Team Lead";
     private static final BigDecimal MIN_SALARY = new BigDecimal(2500);
     private static final BigDecimal MAX_SALARY = new BigDecimal(7000);
     private static final Department DEPARTMENT = Department.DEVELOPMENT;

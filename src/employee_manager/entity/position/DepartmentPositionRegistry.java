@@ -57,8 +57,7 @@ public final class DepartmentPositionRegistry {
         return Collections.unmodifiableMap(POSITION_MAP_BY_DEPARTMENT.get(department));
     }
 
-    public static Department getDepartment(Map<Integer, Department> departmentMap) {
-        Scanner scanner = new Scanner(System.in);
+    public static Department getDepartment(final Map<Integer, Department> departmentMap,final Scanner scanner) {
         while (true) {
             try {
                 System.out.println("Please select a department: ");
@@ -79,8 +78,15 @@ public final class DepartmentPositionRegistry {
             }
         }
     }
-    public static Position getPosition(final Map<Integer, Position> map) {
-        Scanner scanner = new Scanner(System.in);
+    public static Department getDepartmentByName(final Employee employee) {
+        for (Map.Entry<Integer, Department> entry : DEPARTMENT_MAP.entrySet()) {
+            if (entry.getValue().getName().equals(employee.getPosition().getDepartment())) {
+                return entry.getValue();
+            }
+        }
+       return null;
+    }
+    public static Position getPosition(final Map<Integer, Position> map,final Scanner scanner) {
         while (true) {
             try {
             System.out.println("Please select a position: ");
@@ -101,4 +107,5 @@ public final class DepartmentPositionRegistry {
             }
         }
     }
+
 }

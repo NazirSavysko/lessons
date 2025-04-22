@@ -1,12 +1,15 @@
 package employee_manager;
 
 import employee_manager.entity.Employee;
+
 import employee_manager.entity.department.Department;
 import employee_manager.entity.position.Position;
 import employee_manager.io.FileManager;
 
 import java.util.Scanner;
 
+import static employee_manager.entity.accounting.Accounting.changeSalary;
+import static employee_manager.entity.accounting.Accounting.giveValidSalary;
 import static employee_manager.entity.department.DepartmentManager.*;
 import static employee_manager.entity.position.DepartmentPositionRegistry.*;
 import static employee_manager.io.FileManager.*;
@@ -33,8 +36,13 @@ public final class EmployeeManager {
                     case 1 -> showAllEmployees();
                     case 2 -> createEmployee();
                     case 3 -> removeEmployee();
-                    case 4 -> changeDepartment(findEmployeeById(MESSAGE_FOR_FIND, IF_FOUND, IF_NOT_FOUND));
+                    case 4 -> changeDepartment(findEmployeeById(MESSAGE_FOR_FIND, IF_FOUND, IF_NOT_FOUND), SCANNER);
                     case 5 -> {
+                        final Employee employee = findEmployeeById(MESSAGE_FOR_FIND, IF_FOUND, IF_NOT_FOUND);
+                        final double salary = giveValidSalary(employee.getPosition(), SCANNER);
+                        changeSalary(employee, salary);
+                    }
+                    case 6 -> {
                         System.out.println("Exiting...");
                         return;
                     }
@@ -61,7 +69,8 @@ public final class EmployeeManager {
         System.out.println("2. create employee");
         System.out.println("3. remove employee");
         System.out.println("4. change employee department");
-        System.out.println("5. Exit");
+        System.out.println("5. change employee salary");
+        System.out.println("6. Exit");
     }
 
     private static void createEmployee() {
@@ -71,39 +80,18 @@ public final class EmployeeManager {
         final String name = SCANNER.nextLine();
         System.out.println("Enter employee surname: ");
         final String surname = SCANNER.nextLine();
-        final Department department = getDepartment(getDepartmentMap());
-        final Position position = getPosition(getPositionMapByDepartment(department));
-        boolean isValidSalary = false;
-         double salary = 0;
-        while (!isValidSalary) {
-            try {
-            System.out.println("Enter employee salary: ");
-            salary = SCANNER.nextDouble();
-            if (salary >= position.getMinSalary().doubleValue() && salary <= position.getMaxSalary().doubleValue()) {
-                isValidSalary = true;
-            } else {
-                System.out.println("Invalid salary. Salary must be greater than or equal to " + position.getMinSalary()
-                        + " and less than or equal to " + position.getMaxSalary());
-            }
-            }catch (Exception e){
-                System.out.println("An error occurred with input number");
-                System.out.println("Please try again.");
-                if (SCANNER.hasNextLine()) {
-                    SCANNER.nextLine();
-                }
-            }
-        }
+        final Department department = getDepartment(getDepartmentMap(), SCANNER);
+        final Position position = getPosition(getPositionMapByDepartment(department), SCANNER);
+        final double salary = giveValidSalary(position, SCANNER);
 
         final Employee employee = new Employee(name, surname, position, salary);
         addEmployee(employee);
         System.out.println("Employee created successfully: " + employee);
     }
 
-
     private static void removeEmployee() {
         FileManager.removeEmployee(findEmployeeById(MESSAGE_FOR_REMOVE, IF_REMOVED, IF_NOT_REMOVED));
     }
-
 
     private static Employee findEmployeeById(final String purpose, final String ifSuccess, final String ifNotSuccess) {
         Employee employee = null;
