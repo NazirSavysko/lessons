@@ -5,11 +5,14 @@ import employee_manager.entity.position.Position;
 
 import java.util.Scanner;
 
+import static employee_manager.io.FileManager.saveEmployees;
+
 public final class Accounting {
     public static void changeSalary(final Employee employee,final double salary) {
         employee.setSalary(salary);
         employee.setDateOfTheLastSalaryChange(java.time.LocalDate.now());
         System.out.println("Salary was changed successfully");
+        saveEmployees();
     }
 
     public static double giveValidSalary( final Position position,final Scanner scanner) {

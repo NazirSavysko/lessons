@@ -1,7 +1,6 @@
 package employee_manager;
 
 import employee_manager.entity.Employee;
-
 import employee_manager.entity.department.Department;
 import employee_manager.entity.position.Position;
 import employee_manager.io.FileManager;
@@ -10,10 +9,10 @@ import java.util.Scanner;
 
 import static employee_manager.entity.accounting.Accounting.changeSalary;
 import static employee_manager.entity.accounting.Accounting.giveValidSalary;
-import static employee_manager.entity.department.DepartmentManager.*;
+import static employee_manager.entity.department.DepartmentManager.changeDepartment;
 import static employee_manager.entity.position.DepartmentPositionRegistry.*;
-import static employee_manager.io.FileManager.*;
 import static employee_manager.io.FileManager.EMPLOYEES;
+import static employee_manager.io.FileManager.addEmployee;
 
 public final class EmployeeManager {
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -25,6 +24,7 @@ public final class EmployeeManager {
     private static final String MESSAGE_FOR_FIND = "Enter employee ID to find: ";
 
     public static void main(String[] args) {
+        FileManager.readEmployees();
         while (true) {
             try {
                 int choice;

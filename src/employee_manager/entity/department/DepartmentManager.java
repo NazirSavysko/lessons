@@ -10,7 +10,8 @@ import java.util.TreeMap;
 import static employee_manager.entity.accounting.Accounting.changeSalary;
 import static employee_manager.entity.accounting.Accounting.giveValidSalary;
 import static employee_manager.entity.position.DepartmentPositionRegistry.*;
-import static employee_manager.io.FileManager.*;
+import static employee_manager.io.FileManager.removeEmployee;
+import static employee_manager.io.FileManager.saveEmployees;
 
 
 public final class DepartmentManager {
@@ -24,6 +25,8 @@ public final class DepartmentManager {
 
         employee.setPosition(position);
         employee.setSalary(position.getMinSalary().doubleValue());
+        employee.setDateOfTheLastSalaryChange(java.time.LocalDate.now());
+        saveEmployees();
     }
 
     private static int levelOfPosition(final Map<Integer, Position> positionMap, final Position position) {
@@ -56,6 +59,7 @@ public final class DepartmentManager {
             changeSalary(employee, salary);
             System.out.println("Position was changed successfully");
         }
+        saveEmployees();
     }
 
     public static void raisePosition(final Employee employee, final Scanner scanner) {
@@ -73,6 +77,7 @@ public final class DepartmentManager {
             final double salary = giveValidSalary(position, scanner);
             changeSalary(employee, salary);
             System.out.println("Position was changed successfully");
+            saveEmployees();
         }
     }
 

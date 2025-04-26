@@ -1,6 +1,8 @@
 package employee_manager.entity.department;
 
-public enum Department {
+import java.io.Serializable;
+
+public enum Department implements Serializable {
     DEVELOPMENT("Development") {
         public String getName() {
             return this.name();

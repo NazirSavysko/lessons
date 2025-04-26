@@ -2,9 +2,14 @@ package employee_manager.entity;
 
 import employee_manager.entity.position.Position;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public final class Employee {
+public final class Employee implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private static int maxId = 0;
     private final int id;
     private final String name;
