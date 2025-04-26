@@ -33,13 +33,22 @@ public final class FileManager {
     private static void createFileIfNotExists() {
         final File file = new File(FILE_NAME);
         if (!file.exists()) {
+            ObjectOutputStream objectOutputStream = null;
             try {
                 file.createNewFile();
-                final ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
+                objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
                 objectOutputStream.writeObject(EMPLOYEES);
 
             } catch (IOException e) {
                 System.out.println("Error creating file: " + e.getMessage());
+            } finally {
+                if (objectOutputStream != null) {
+                    try {
+                        objectOutputStream.close();
+                    } catch (IOException e) {
+                        System.out.println("Error closing file: " + e.getMessage());
+                    }
+                }
             }
         }
     }
@@ -47,7 +56,6 @@ public final class FileManager {
     public static void saveEmployees() {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             objectOutputStream.writeObject(EMPLOYEES);
-            System.out.println("Employees saved into file successfully.");
         } catch (IOException e) {
             System.out.println("Error saving employees to file: " + e.getMessage());
         }
