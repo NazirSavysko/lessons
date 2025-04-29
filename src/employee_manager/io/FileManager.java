@@ -105,7 +105,14 @@ public final class FileManager {
                         .peek(entry -> {
                             List<Employee> listSortedEmployeesBySalary = entry.getValue()
                                     .stream()
-                                    .filter(FileManager::checkIfEmployeeIsTheBiggestPositionInDepartment)
+                                    .filter(employee -> {
+                                        Set<String> setOfBiggestPositions = new HashSet<>();
+                                        setOfBiggestPositions.add(new TeamLead().getName());
+                                        setOfBiggestPositions.add(new HeadOfMarketing().getName());
+                                        setOfBiggestPositions.add(new HeadOfHr().getName());
+
+                                        return setOfBiggestPositions.contains(employee.getPosition().getName());
+                                    })
                                     .toList();
                             entry.getValue().clear();
                             entry.getValue().addAll(listSortedEmployeesBySalary);
@@ -113,15 +120,6 @@ public final class FileManager {
                         collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         printMap(mapOfEmployeesHavingTheBiggestPositionInEachDepartment, formatForEmployee, formatHeader);
-    }
-
-    private static boolean checkIfEmployeeIsTheBiggestPositionInDepartment(final Employee employee) {
-        Set<String> setOfBiggestPositions = new HashSet<>();
-        setOfBiggestPositions.add(new TeamLead().getName());
-        setOfBiggestPositions.add(new HeadOfMarketing().getName());
-        setOfBiggestPositions.add(new HeadOfHr().getName());
-
-        return setOfBiggestPositions.contains(employee.getPosition().getName());
     }
 
     private static void printMap(final Map<String, List<Employee>> mapOfEmployees,final String formatForEmployee,final String formatForHeader) {
