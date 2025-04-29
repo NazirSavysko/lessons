@@ -11,8 +11,7 @@ import static employee_manager.entity.accounting.Accounting.changeSalary;
 import static employee_manager.entity.accounting.Accounting.giveValidSalary;
 import static employee_manager.entity.department.DepartmentManager.changeDepartment;
 import static employee_manager.entity.position.DepartmentPositionRegistry.*;
-import static employee_manager.io.FileManager.EMPLOYEES;
-import static employee_manager.io.FileManager.addEmployee;
+import static employee_manager.io.FileManager.*;
 
 public final class EmployeeManager {
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -22,6 +21,9 @@ public final class EmployeeManager {
     private static final String IF_NOT_FOUND = "Employee with ID %d not found. Please try again.\n";
     private static final String MESSAGE_FOR_REMOVE = "Enter employee ID to remove: ";
     private static final String MESSAGE_FOR_FIND = "Enter employee ID to find: ";
+    private static final String FORMAT_HEADER = "%4s  %-10s  %-10s  %-12s  %-17s  %10s     %-10s%n";
+    private static final String FORMAT_FOR_EMPLOYEE = "%4d  %-10s  %-10s  %-12s  %-17s  %10.2f     %-6s%n";
+
 
     public static void main(String[] args) {
         FileManager.readEmployees();
@@ -37,12 +39,15 @@ public final class EmployeeManager {
                     case 2 -> createEmployee();
                     case 3 -> removeEmployee();
                     case 4 -> changeDepartment(findEmployeeById(MESSAGE_FOR_FIND, IF_FOUND, IF_NOT_FOUND), SCANNER);
-                    case 5 -> {
+                    case 5 -> printAllEmployeesGroupingByDepartment(FORMAT_FOR_EMPLOYEE, FORMAT_HEADER);
+                    case 6 -> printEmployeesByDepartmentAndSortedByDescendingSalary(FORMAT_FOR_EMPLOYEE,FORMAT_HEADER);
+                    case 7 -> printEmployeesHavingTheBiggestPositionInEachDepartment(FORMAT_FOR_EMPLOYEE, FORMAT_HEADER);
+                    case 8 -> {
                         final Employee employee = findEmployeeById(MESSAGE_FOR_FIND, IF_FOUND, IF_NOT_FOUND);
                         final double salary = giveValidSalary(employee.getPosition(), SCANNER);
                         changeSalary(employee, salary);
                     }
-                    case 6 -> {
+                    case 9 -> {
                         System.out.println("Exiting...");
                         return;
                     }
@@ -60,7 +65,9 @@ public final class EmployeeManager {
 
     private static void showAllEmployees() {
         System.out.println("All employees:");
-        EMPLOYEES.forEach(System.out::println);
+        System.out.printf(FORMAT_HEADER,
+                "ID", "Name", "Surname", "Date", "Position", "Salary","Date of last salary change");
+        EMPLOYEES.forEach(employee -> System.out.println(employee.toString(FORMAT_FOR_EMPLOYEE)));
     }
 
     private static void showMainMenu() {
@@ -69,8 +76,11 @@ public final class EmployeeManager {
         System.out.println("2. create employee");
         System.out.println("3. remove employee");
         System.out.println("4. change employee department");
-        System.out.println("5. change employee salary");
-        System.out.println("6. Exit");
+        System.out.println("5. print employees grouping by department");
+        System.out.println("6. print employees grouping by department and sorted by descending salary");
+        System.out.println("7. print employees having the biggest position in each department");
+        System.out.println("8. change employee salary");
+        System.out.println("9. Exit");
     }
 
     private static void createEmployee() {
@@ -84,7 +94,8 @@ public final class EmployeeManager {
         final Position position = getPosition(getPositionMapByDepartment(department), SCANNER);
         final double salary = giveValidSalary(position, SCANNER);
 
-        final Employee employee = new Employee(name, surname, position, salary);
+        final int id =  EMPLOYEES.isEmpty() ? 1 :  EMPLOYEES.getLast().getId() + 1;
+        final Employee employee = new Employee(id, name, surname, position, salary);
         addEmployee(employee);
         System.out.println("Employee created successfully: " + employee);
     }
@@ -122,5 +133,6 @@ public final class EmployeeManager {
         }
         return employee;
     }
+
 }
 

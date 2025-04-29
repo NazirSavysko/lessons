@@ -8,9 +8,8 @@ import java.time.LocalDate;
 
 public final class Employee implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    private static int maxId = 0;
     private final int id;
     private final String name;
     private final String surname;
@@ -21,7 +20,6 @@ public final class Employee implements Serializable {
 
     public Employee(int id, String name, String surname, LocalDate dateOfEmployment, Position position, double salary, LocalDate dateOfTheLastSalaryChange) {
         this.id = id;
-        if (maxId < id) maxId = id;
         this.name = name;
         this.surname = surname;
         this.dateOfEmployment = dateOfEmployment;
@@ -29,10 +27,9 @@ public final class Employee implements Serializable {
         this.salary = salary;
         this.dateOfTheLastSalaryChange = dateOfTheLastSalaryChange;
     }
-    public Employee( String name, String surname, Position position, double salary) {
-        this(++maxId, name, surname,LocalDate.now() , position, salary, LocalDate.now());
+    public Employee(int id, String name, String surname, Position position, double salary) {
+        this(id, name, surname, LocalDate.now(), position, salary, LocalDate.now());
     }
-
     public  int getId() {
         return id;
     }
@@ -59,6 +56,12 @@ public final class Employee implements Serializable {
         this.dateOfTheLastSalaryChange = dateOfTheLastSalaryChange;
     }
 
+
+    public String toString(final String format) {
+       return String.format(format,
+                id, name, surname, dateOfEmployment, position.getName(), salary, dateOfTheLastSalaryChange);
+    }
+
     @Override
     public String toString() {
         return "Employee{" +
@@ -66,7 +69,7 @@ public final class Employee implements Serializable {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", dateOfEmployment=" + dateOfEmployment +
-                ", position=" + position.getName() +
+                ", position=" + position +
                 ", salary=" + salary +
                 ", dateOfTheLastSalaryChange=" + dateOfTheLastSalaryChange +
                 '}';

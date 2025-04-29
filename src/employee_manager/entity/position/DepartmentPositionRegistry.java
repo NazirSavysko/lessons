@@ -26,10 +26,10 @@ public final class DepartmentPositionRegistry {
     private static final Map<Department,Map<Integer,Position>> POSITION_MAP_BY_DEPARTMENT = new HashMap<>(
             Map.of(
                     DEVELOPMENT, new TreeMap<>(Map.of(
-                            1, new JuniorDeveloper(),
-                            2, new MiddleDeveloper(),
-                            3, new SeniorDeveloper(),
-                            4, new TeamLead()
+                            1,  new TeamLead(),
+                            2, new SeniorDeveloper(),
+                            3, new MiddleDeveloper(),
+                            4, new JuniorDeveloper()
                     )),
                     HR, new TreeMap<>(Map.of(
                             1, new HeadOfHr(),
