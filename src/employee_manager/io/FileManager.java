@@ -98,6 +98,11 @@ public final class FileManager {
     }
 
     public static void printEmployeesHavingTheBiggestPositionInEachDepartment(final String formatForEmployee, final String formatHeader) {
+      final Set<String> setOfBiggestPositions = new HashSet<>();
+        setOfBiggestPositions.add(new TeamLead().getName());
+        setOfBiggestPositions.add(new HeadOfMarketing().getName());
+        setOfBiggestPositions.add(new HeadOfHr().getName());
+
         final Map<String, List<Employee>> mapOfEmployeesHavingTheBiggestPositionInEachDepartment =
                 getMapEmployeesGroupingByDepartment()
                         .entrySet()
@@ -106,11 +111,6 @@ public final class FileManager {
                             List<Employee> listSortedEmployeesBySalary = entry.getValue()
                                     .stream()
                                     .filter(employee -> {
-                                        Set<String> setOfBiggestPositions = new HashSet<>();
-                                        setOfBiggestPositions.add(new TeamLead().getName());
-                                        setOfBiggestPositions.add(new HeadOfMarketing().getName());
-                                        setOfBiggestPositions.add(new HeadOfHr().getName());
-
                                         return setOfBiggestPositions.contains(employee.getPosition().getName());
                                     })
                                     .toList();
