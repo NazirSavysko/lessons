@@ -7,22 +7,30 @@ import smartphone_factory.entity.Smartphone;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
 
 import static java.lang.System.out;
 import static java.lang.Thread.currentThread;
+import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.IntStream.range;
 
 public final class SmartphoneFactory {
     private static SmartphoneFactory INSTANCE;
+
     private static final int NUMBER_OF_CONTAINERS = Runtime.getRuntime().availableProcessors();
     private static final int SECONDS_DURATION_TO_SLEEP = 1;
+
     private static final String TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED
-            = "Order from %s in quantity %d completed %s\n";
+            = "Order '%d' from %s in quantity %d completed %s\n";
 
     private final Queue<Order> orders;
+    private final ExecutorService executorService;
+
 
     private SmartphoneFactory() {
         this.orders = new LinkedList<>();
+        this.executorService = newFixedThreadPool(NUMBER_OF_CONTAINERS);
     }
 
     public static SmartphoneFactory getInstance() {
@@ -32,26 +40,55 @@ public final class SmartphoneFactory {
         return INSTANCE;
     }
 
+    private void produce() {
+        final Order order = getAndRemoveOrderFromQueue();
+        final Smartphone smartphone = order.getSmartphone();
+        final int numberOfSmartphones = order.getNumberOfSmartphones();
 
-    public void produce() {
-        final Order order = orders.poll();
-        final Smartphone o = order.getSmartphone();
-        for (int i = 0; i < order.getNumberOfSmartphones(); i++) {
+        range(0, numberOfSmartphones).forEach(_ -> createSmartphone(smartphone));
+
+        out.printf(TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED,
+                order.getId(),
+                order.getOderDate(),
+                order.getNumberOfSmartphones(),
+                LocalDateTime.now());
+    }
+
+    private synchronized Order getAndRemoveOrderFromQueue() {
+        while (this.orders.isEmpty()) {
             try {
-                new Smartphone(o.getName(), o.getModel(), o.getMemoryCapacity(), o.getScreenSize());
-                TimeUnit.SECONDS.sleep(SECONDS_DURATION_TO_SLEEP);
+                wait();
             } catch (InterruptedException e) {
                 currentThread().interrupt();
             }
         }
-        out.printf(TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED, order.getOderDate(),
-                order.getNumberOfSmartphones(), LocalDateTime.now());
+
+        return this.orders.poll();
     }
 
-    public void addOrder(Order order) {
-        orders.add(order);
-        if (orders.size() - 1 == 0) {
-            this.produce();
+    public void putOrderIntoQueue(final Order order) {
+        synchronized (this) {
+            this.orders.add(order);
+            notify();
         }
+
+        this.executorService.execute(this::produce);
+    }
+
+    private void createSmartphone(final Smartphone smartphone) {
+        try {
+            new Smartphone(smartphone.getName(),
+                    smartphone.getModel(),
+                    smartphone.getMemoryCapacity(),
+                    smartphone.getScreenSize());
+
+            SECONDS.sleep(SECONDS_DURATION_TO_SLEEP);
+        } catch (InterruptedException e) {
+            currentThread().interrupt();
+        }
+    }
+
+    public void shutdown() {
+        this.executorService.shutdown();
     }
 }

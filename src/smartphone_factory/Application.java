@@ -8,9 +8,13 @@ import java.util.Scanner;
 
 import static java.lang.System.out;
 
-class Application {
+public final class Application {
     private static final String TEMPLATE_MESSAGE_OF_ORDER_IS_CREATED
-            = "The order is created at %s\n";
+            = "The order '%d' is created at %s\n";
+    private static final String MESSAGE_IF_SOMETHING_WENT_WRONG_WITH_INPUT_NUMBER
+            = "An error occurred with input number\n"
+            + "Please try again.";
+
     private static final Scanner SCANNER = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -23,13 +27,13 @@ class Application {
                     case 1 -> makeOrder(factory);
                     case 2 -> {
                         out.println("Exiting...");
+                        factory.shutdown();
                         return;
                     }
                     default -> out.println("Invalid choice. Please try again.");
                 }
             } catch (Exception e) {
-                out.println("An error occurred with input number");
-                out.println("Please try again.");
+                out.println(MESSAGE_IF_SOMETHING_WENT_WRONG_WITH_INPUT_NUMBER);
                 if (SCANNER.hasNextLine()) {
                     SCANNER.nextLine();
                 }
@@ -59,13 +63,17 @@ class Application {
                 final double screenSize = SCANNER.nextDouble();
 
                 final Smartphone smartphone = new Smartphone(name, model, memoryCapacity, screenSize);
-                Order order = new Order(smartphone, numberOfSmartphones);
-                out.printf(TEMPLATE_MESSAGE_OF_ORDER_IS_CREATED, order.getOderDate());
-                factory.addOrder(order);
+                final Order order = new Order(smartphone, numberOfSmartphones);
+
+                out.printf(TEMPLATE_MESSAGE_OF_ORDER_IS_CREATED,
+                        order.getId(),
+                        order.getOderDate());
+
+                factory.putOrderIntoQueue(order);
                 isValid = true;
             } catch (Exception e) {
-                out.println("An error occurred with input number");
-                out.println("Please try again.");
+                out.println(MESSAGE_IF_SOMETHING_WENT_WRONG_WITH_INPUT_NUMBER);
+
                 if (SCANNER.hasNextLine()) {
                     SCANNER.nextLine();
                 }

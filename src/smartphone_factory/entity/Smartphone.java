@@ -14,18 +14,18 @@ public final class Smartphone {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public double getScreenSize() {
-        return screenSize;
+        return this.screenSize;
     }
 
     public int getMemoryCapacity() {
-        return memoryCapacity;
+        return this.memoryCapacity;
     }
 
     public String getModel() {
-        return model;
+        return this.model;
     }
 }

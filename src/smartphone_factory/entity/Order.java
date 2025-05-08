@@ -3,12 +3,16 @@ package smartphone_factory.entity;
 import java.time.LocalDateTime;
 
 public final class Order {
+    private static int maxId = 0;
+
+    private final int id;
     private final LocalDateTime oderDate;
     private final Smartphone smartphone;
     private  OrderStatus orderStatus;
     private final int numberOfSmartphones;
 
     public Order(LocalDateTime oderDate, Smartphone smartphone, OrderStatus orderStatus, int numberOfSmartphones) {
+        this.id = ++maxId;
         this.oderDate = oderDate;
         this.smartphone = smartphone;
         this.orderStatus = orderStatus;
@@ -19,21 +23,24 @@ public final class Order {
     }
 
     public LocalDateTime getOderDate() {
-        return oderDate;
+        return this.oderDate;
     }
 
     public int getNumberOfSmartphones() {
-        return numberOfSmartphones;
+        return this.numberOfSmartphones;
     }
 
     public Smartphone getSmartphone() {
-        return smartphone;
+        return this.smartphone;
     }
 
     public OrderStatus getOrderStatus() {
-        return orderStatus;
+        return this.orderStatus;
     }
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+    public int getId() {
+        return this.id;
     }
 }
