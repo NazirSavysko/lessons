@@ -1,8 +1,7 @@
 package smartphone_factory.factory;
 
-
-import smartphone_factory.entity.Order;
-import smartphone_factory.entity.Smartphone;
+import smartphone_factory.entity.order_entity.Order;
+import smartphone_factory.entity.smartphone_entity.*;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -77,10 +76,14 @@ public final class SmartphoneFactory {
 
     private void createSmartphone(final Smartphone smartphone) {
         try {
-            new Smartphone(smartphone.getName(),
-                    smartphone.getModel(),
-                    smartphone.getMemoryCapacity(),
-                    smartphone.getScreenSize());
+            final Smartphone newSmartphone = switch (smartphone) {
+                case NoNameChinaSmartphone _ -> new NoNameChinaSmartphone(smartphone.getName(), smartphone.getModel());
+                case NoNameIndiaSmartphone _ -> new NoNameIndiaSmartphone(smartphone.getName(), smartphone.getModel());
+                case TaiwanSmartphone _ -> new TaiwanSmartphone(smartphone.getName(), smartphone.getModel());
+                case TopKoreaSmartphone _ -> new TopKoreaSmartphone(smartphone.getName(), smartphone.getModel());
+                case TopUsaSmartphone _ -> new TopUsaSmartphone(smartphone.getName(), smartphone.getModel());
+                default -> throw new RuntimeException("Unknown smartphone type: " + smartphone.getClass());
+            };
 
             SECONDS.sleep(SECONDS_DURATION_TO_SLEEP);
         } catch (InterruptedException e) {

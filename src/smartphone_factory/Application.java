@@ -1,9 +1,12 @@
 package smartphone_factory;
 
-import smartphone_factory.entity.Order;
-import smartphone_factory.entity.Smartphone;
+import smartphone_factory.entity.order_entity.Order;
+import smartphone_factory.entity.smartphone_entity.Smartphone;
+import smartphone_factory.entity.smartphone_entity.SmartphoneRegistry;
 import smartphone_factory.factory.SmartphoneFactory;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -15,16 +18,18 @@ public final class Application {
             = "An error occurred with input number\n"
             + "Please try again.";
 
+
     private static final Scanner SCANNER = new Scanner(System.in);
 
     public static void main(String[] args) {
         final SmartphoneFactory factory = SmartphoneFactory.getInstance();
+        final SmartphoneRegistry registry = SmartphoneRegistry.getInstance();
         while (true) {
             try {
                 showMenu();
                 final int choice = SCANNER.nextInt();
                 switch (choice) {
-                    case 1 -> makeOrder(factory);
+                    case 1 -> makeOrder(factory, registry);
                     case 2 -> {
                         out.println("Exiting...");
                         factory.shutdown();
@@ -47,22 +52,41 @@ public final class Application {
         out.println("2. Exit");
     }
 
-    private static void makeOrder(final SmartphoneFactory factory) {
+    private static void makeOrder(final SmartphoneFactory factory, final SmartphoneRegistry registry) {
         boolean isValid = false;
         while (!isValid) {
             try {
                 out.println("Enter the number of smartphones: ");
                 final int numberOfSmartphones = SCANNER.nextInt();
+
+                final Map<String, List<Class<? extends Smartphone>>> stringClassMap =
+                        registry.smartphoneMapGroupedByCategory();
+                final short[] i = new short[1];
+                stringClassMap.forEach((key, _) -> out.println(++i[0] + " - " + key)
+                );
+
+                out.println("Enter the smartphone category: ");
+                final int smartphoneCategory = SCANNER.nextInt();
+                final List<Class<? extends Smartphone>> smartphoneListByCategory =
+                        registry.getSmartphoneListByCategory(stringClassMap.keySet()
+                                .toArray()[smartphoneCategory - 1].toString());
+                i[0] = 0;
+                smartphoneListByCategory.forEach(smartphoneClass ->
+                        out.println(++i[0] + " - " + smartphoneClass.getSimpleName()));
+
+                out.println("Enter the smartphone class: ");
+                final int smartphoneClass = SCANNER.nextInt();
+                final Class<? extends Smartphone> smartphoneClassByCategory =
+                        smartphoneListByCategory.get(smartphoneClass - 1);
+
                 out.println("Enter the name of smartphone: ");
                 final String name = SCANNER.next();
+
                 out.println("Enter the model of smartphone: ");
                 final String model = SCANNER.next();
-                out.println("Enter the memory capacity of smartphone: ");
-                final int memoryCapacity = SCANNER.nextInt();
-                out.println("Enter the screen size of smartphone: ");
-                final double screenSize = SCANNER.nextDouble();
 
-                final Smartphone smartphone = new Smartphone(name, model, memoryCapacity, screenSize);
+                final Smartphone smartphone = smartphoneClassByCategory.getConstructor(String.class, String.class)
+                        .newInstance(name, model);
                 final Order order = new Order(smartphone, numberOfSmartphones);
 
                 out.printf(TEMPLATE_MESSAGE_OF_ORDER_IS_CREATED,

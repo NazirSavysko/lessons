@@ -1,4 +1,6 @@
-package smartphone_factory.entity;
+package smartphone_factory.entity.order_entity;
+
+import smartphone_factory.entity.smartphone_entity.Smartphone;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +10,7 @@ public final class Order {
     private final int id;
     private final LocalDateTime oderDate;
     private final Smartphone smartphone;
-    private  OrderStatus orderStatus;
+    private OrderStatus orderStatus;
     private final int numberOfSmartphones;
 
     public Order(LocalDateTime oderDate, Smartphone smartphone, OrderStatus orderStatus, int numberOfSmartphones) {

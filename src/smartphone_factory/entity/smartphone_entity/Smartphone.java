@@ -1,12 +1,12 @@
-package smartphone_factory.entity;
+package smartphone_factory.entity.smartphone_entity;
 
-public final class Smartphone {
+public abstract class Smartphone {
     private final String name;
     private final String model;
     private final int memoryCapacity;
     private final double screenSize;
 
-    public Smartphone(String name, String model, int memoryCapacity, double screenSize) {
+    public Smartphone(final String name,final String model,final int memoryCapacity,final double screenSize) {
         this.name = name;
         this.model = model;
         this.memoryCapacity = memoryCapacity;
@@ -16,16 +16,13 @@ public final class Smartphone {
     public String getName() {
         return this.name;
     }
-
-    public double getScreenSize() {
-        return this.screenSize;
+    public String getModel() {
+        return this.model;
     }
-
     public int getMemoryCapacity() {
         return this.memoryCapacity;
     }
-
-    public String getModel() {
-        return this.model;
+    public double getScreenSize() {
+        return this.screenSize;
     }
 }
