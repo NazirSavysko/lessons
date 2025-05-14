@@ -1,23 +1,24 @@
 package smartphone_factory.factory;
 
 import smartphone_factory.entity.order_entity.Order;
-import smartphone_factory.entity.smartphone_entity.*;
+import smartphone_factory.entity.smartphone_entity.Smartphone;
+import smartphone_factory.io.FileSmartphoneManager;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.Observable;
 import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
-import static java.lang.System.out;
+import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 
-public final class SmartphoneFactory {
+public class SmartphoneFactory extends Observable {
     private static SmartphoneFactory INSTANCE;
 
-    private static final int NUMBER_OF_CONTAINERS = Runtime.getRuntime().availableProcessors();
     private static final int SECONDS_DURATION_TO_SLEEP = 1;
 
     private static final String TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED
@@ -25,11 +26,14 @@ public final class SmartphoneFactory {
 
     private final Queue<Order> orders;
     private final ExecutorService executorService;
+    private final FileSmartphoneManager fileSmartphoneManage;
 
 
-    private SmartphoneFactory() {
+    SmartphoneFactory() {
+        this.fileSmartphoneManage = FileSmartphoneManager.INSTANCE;
         this.orders = new LinkedList<>();
-        this.executorService = newFixedThreadPool(NUMBER_OF_CONTAINERS);
+        int numberOfContainers = Runtime.getRuntime().availableProcessors();
+        this.executorService = newFixedThreadPool(numberOfContainers);
     }
 
     public static SmartphoneFactory getInstance() {
@@ -46,11 +50,12 @@ public final class SmartphoneFactory {
 
         range(0, numberOfSmartphones).forEach(_ -> createSmartphone(smartphone));
 
-        out.printf(TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED,
-                order.getId(),
-                order.getOderDate(),
-                order.getNumberOfSmartphones(),
-                LocalDateTime.now());
+        final String message = format(TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED,
+                order.getId(), order.getOderDate(), numberOfSmartphones, LocalDateTime.now());
+
+        fileSmartphoneManage.writeInformationAboutOrderIntoFile(message);
+        this.setChanged();
+        this.notifyObservers(message);
     }
 
     private synchronized Order getAndRemoveOrderFromQueue() {
@@ -76,15 +81,7 @@ public final class SmartphoneFactory {
 
     private void createSmartphone(final Smartphone smartphone) {
         try {
-            final Smartphone newSmartphone = switch (smartphone) {
-                case NoNameChinaSmartphone _ -> new NoNameChinaSmartphone(smartphone.getName(), smartphone.getModel());
-                case NoNameIndiaSmartphone _ -> new NoNameIndiaSmartphone(smartphone.getName(), smartphone.getModel());
-                case TaiwanSmartphone _ -> new TaiwanSmartphone(smartphone.getName(), smartphone.getModel());
-                case TopKoreaSmartphone _ -> new TopKoreaSmartphone(smartphone.getName(), smartphone.getModel());
-                case TopUsaSmartphone _ -> new TopUsaSmartphone(smartphone.getName(), smartphone.getModel());
-                default -> throw new RuntimeException("Unknown smartphone type: " + smartphone.getClass());
-            };
-
+            final Smartphone _ = smartphone.clone();
             SECONDS.sleep(SECONDS_DURATION_TO_SLEEP);
         } catch (InterruptedException e) {
             currentThread().interrupt();

@@ -1,17 +1,18 @@
 package smartphone_factory;
 
+import smartphone_factory.entity.director.Director;
 import smartphone_factory.entity.order_entity.Order;
+import smartphone_factory.entity.smartphone_builder.AbstractSmartphoneBuilder;
 import smartphone_factory.entity.smartphone_entity.Smartphone;
 import smartphone_factory.entity.smartphone_entity.SmartphoneRegistry;
+import smartphone_factory.factory.SmartphoneBuilderFactory;
 import smartphone_factory.factory.SmartphoneFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 import static java.lang.System.out;
 
-public final class Application {
+public final class Application implements Observer  {
     private static final String TEMPLATE_MESSAGE_OF_ORDER_IS_CREATED
             = "The order '%d' is created at %s\n";
     private static final String MESSAGE_IF_SOMETHING_WENT_WRONG_WITH_INPUT_NUMBER
@@ -23,7 +24,8 @@ public final class Application {
 
     public static void main(String[] args) {
         final SmartphoneFactory factory = SmartphoneFactory.getInstance();
-        final SmartphoneRegistry registry = SmartphoneRegistry.getInstance();
+        final SmartphoneRegistry registry = SmartphoneRegistry.INSTANCE;
+        factory.addObserver(new Application());
         while (true) {
             try {
                 showMenu();
@@ -85,8 +87,12 @@ public final class Application {
                 out.println("Enter the model of smartphone: ");
                 final String model = SCANNER.next();
 
-                final Smartphone smartphone = smartphoneClassByCategory.getConstructor(String.class, String.class)
-                        .newInstance(name, model);
+                final Director director = new Director(name, model);
+                final AbstractSmartphoneBuilder abstractSmartphoneBuilder = SmartphoneBuilderFactory
+                        .getSmartphoneBuilder(smartphoneClassByCategory);
+                director.buildSmartphone(abstractSmartphoneBuilder);
+
+                final Smartphone smartphone = director.buildSmartphone(abstractSmartphoneBuilder);
                 final Order order = new Order(smartphone, numberOfSmartphones);
 
                 out.printf(TEMPLATE_MESSAGE_OF_ORDER_IS_CREATED,
@@ -103,5 +109,10 @@ public final class Application {
                 }
             }
         }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        out.println("Order status updated: " + arg);
     }
 }

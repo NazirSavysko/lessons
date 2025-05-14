@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Stream.of;
 
-public final class SmartphoneRegistry {
-    private static SmartphoneRegistry INSTANCE;
+public enum SmartphoneRegistry {
+     INSTANCE;
 
     private static final Class<? extends Smartphone>[] SMARTPHONE_CLASSES = new Class[]{
             NoNameChinaSmartphone.class,
@@ -18,18 +18,6 @@ public final class SmartphoneRegistry {
             TopKoreaSmartphone.class,
             TopUsaSmartphone.class
     };
-
-    private SmartphoneRegistry() {
-    }
-
-
-    public static SmartphoneRegistry getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new SmartphoneRegistry();
-        }
-        return INSTANCE;
-    }
-
 
     public Map<String, List<Class<? extends Smartphone>>> smartphoneMapGroupedByCategory() {
         return of(SMARTPHONE_CLASSES)
