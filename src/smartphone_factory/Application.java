@@ -90,7 +90,6 @@ public final class Application implements Observer  {
                 final Director director = new Director(name, model);
                 final AbstractSmartphoneBuilder abstractSmartphoneBuilder = SmartphoneBuilderFactory
                         .getSmartphoneBuilder(smartphoneClassByCategory);
-                director.buildSmartphone(abstractSmartphoneBuilder);
 
                 final Smartphone smartphone = director.buildSmartphone(abstractSmartphoneBuilder);
                 final Order order = new Order(smartphone, numberOfSmartphones);
