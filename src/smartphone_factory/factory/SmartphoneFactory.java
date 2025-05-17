@@ -48,6 +48,9 @@ public class SmartphoneFactory extends Observable {
 
     private void produce() {
         final Order order = getAndRemoveOrderFromQueue();
+        if (order == null) {
+            return;
+        }
         final String messageOfOrderIsTaken = format(TEMPLATE_MESSAGE_OF_ORDER_IS_TAKEN,
                 order.getId(), order.getNumberOfSmartphones());
         fileSmartphoneManage.writeInformationAboutOrderIntoFile(messageOfOrderIsTaken);

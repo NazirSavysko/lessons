@@ -7,6 +7,7 @@ import smartphone_factory.entity.smartphone_entity.NoNameChinaSmartphone;
 import smartphone_factory.factory.SmartphoneFactory;
 import smartphone_factory.io.FileSmartphoneManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -42,13 +43,12 @@ class SmartphoneFactoryTest {
         // Given
         final String filePath = "test_when_queue_is_empty.txt";
         setFilePath(filePath);
+
         // When
-        smartphoneFactory.putOrderIntoQueue(null);
+        handle.bindTo(smartphoneFactory).invoke();
 
         // Then
-        assertThrows(NullPointerException.class, () -> {
-            handle.bindTo(smartphoneFactory).invoke();
-        });
+        assertTrue(Files.size(Path.of(filePath)) == 0);
     }
 
     @Test
