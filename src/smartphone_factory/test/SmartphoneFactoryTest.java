@@ -43,7 +43,7 @@ class SmartphoneFactoryTest {
         final String filePath = "test_when_queue_is_empty.txt";
         setFilePath(filePath);
         // When
-        // Order is empty
+        smartphoneFactory.putOrderIntoQueue(null);
 
         // Then
         assertThrows(NullPointerException.class, () -> {
