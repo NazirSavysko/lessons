@@ -8,7 +8,7 @@ import static java.lang.System.out;
 public enum FileSmartphoneManager{
     INSTANCE;
 
-    private static final String FILE_PATH = "smartphone_order_information.txt";
+    private static  String FILE_PATH = "smartphone_order_information.txt";
     private static final String FILE_WRITE_ERROR_MESSAGE = "Error while saving data to file: %s";
 
     public synchronized  void writeInformationAboutOrderIntoFile(String data) {
@@ -18,6 +18,10 @@ public enum FileSmartphoneManager{
             out.printf(FILE_WRITE_ERROR_MESSAGE, e.getMessage());
         }
 
+    }
+
+    public static void setFilePath(String filePath) {
+        FILE_PATH = filePath;
     }
 }
 

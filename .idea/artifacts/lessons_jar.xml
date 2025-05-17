@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact name="lessons:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/lessons_jar</output-path>
+    <root id="root">
+      <element id="archive" name="lessons.jar">
+        <element id="module-output" name="lessons" />
+      </element>
+      <element id="library" level="module" name="JUnit5.8.1" module-name="lessons" />
+    </root>
+  </artifact>
+</component>

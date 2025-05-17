@@ -24,6 +24,9 @@ public class SmartphoneFactory extends Observable {
     private static final String TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED
             = "Order '%d' from %s in quantity %d completed %s\n";
 
+    private static final String TEMPLATE_MESSAGE_OF_ORDER_IS_TAKEN
+            = "Order '%d' in quantity %d taken\n";
+
     private final Queue<Order> orders;
     private final ExecutorService executorService;
     private final FileSmartphoneManager fileSmartphoneManage;
@@ -45,35 +48,30 @@ public class SmartphoneFactory extends Observable {
 
     private void produce() {
         final Order order = getAndRemoveOrderFromQueue();
+        final String messageOfOrderIsTaken = format(TEMPLATE_MESSAGE_OF_ORDER_IS_TAKEN,
+                order.getId(), order.getNumberOfSmartphones());
+        fileSmartphoneManage.writeInformationAboutOrderIntoFile(messageOfOrderIsTaken);
+
         final Smartphone smartphone = order.getSmartphone();
         final int numberOfSmartphones = order.getNumberOfSmartphones();
 
         range(0, numberOfSmartphones).forEach(_ -> createSmartphone(smartphone));
 
-        final String message = format(TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED,
+        final String messageOfOrderIsCompleted = format(TEMPLATE_MESSAGE_OF_ORDER_IS_COMPLETED,
                 order.getId(), order.getOderDate(), numberOfSmartphones, LocalDateTime.now());
 
-        fileSmartphoneManage.writeInformationAboutOrderIntoFile(message);
+        fileSmartphoneManage.writeInformationAboutOrderIntoFile(messageOfOrderIsCompleted);
         this.setChanged();
-        this.notifyObservers(message);
+        this.notifyObservers(messageOfOrderIsCompleted);
     }
 
     private synchronized Order getAndRemoveOrderFromQueue() {
-        while (this.orders.isEmpty()) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                currentThread().interrupt();
-            }
-        }
-
         return this.orders.poll();
     }
 
     public void putOrderIntoQueue(final Order order) {
         synchronized (this) {
             this.orders.add(order);
-            notify();
         }
 
         this.executorService.execute(this::produce);

@@ -7,9 +7,11 @@ import smartphone_factory.entity.smartphone_entity.Smartphone;
 import smartphone_factory.entity.smartphone_entity.SmartphoneRegistry;
 import smartphone_factory.factory.SmartphoneBuilderFactory;
 import smartphone_factory.factory.SmartphoneFactory;
+import smartphone_factory.io.FileSmartphoneManager;
 
 import java.util.*;
 
+import static java.lang.String.format;
 import static java.lang.System.out;
 
 public final class Application implements Observer  {
@@ -25,13 +27,14 @@ public final class Application implements Observer  {
     public static void main(String[] args) {
         final SmartphoneFactory factory = SmartphoneFactory.getInstance();
         final SmartphoneRegistry registry = SmartphoneRegistry.INSTANCE;
+        final FileSmartphoneManager fileSmartphoneManager = FileSmartphoneManager.INSTANCE;
         factory.addObserver(new Application());
         while (true) {
             try {
                 showMenu();
                 final int choice = SCANNER.nextInt();
                 switch (choice) {
-                    case 1 -> makeOrder(factory, registry);
+                    case 1 -> makeOrder(factory, registry, fileSmartphoneManager);
                     case 2 -> {
                         out.println("Exiting...");
                         factory.shutdown();
@@ -54,7 +57,7 @@ public final class Application implements Observer  {
         out.println("2. Exit");
     }
 
-    private static void makeOrder(final SmartphoneFactory factory, final SmartphoneRegistry registry) {
+    private static void makeOrder(final SmartphoneFactory factory,final SmartphoneRegistry registry,final FileSmartphoneManager fileSmartphoneManager) {
         boolean isValid = false;
         while (!isValid) {
             try {
@@ -94,9 +97,13 @@ public final class Application implements Observer  {
                 final Smartphone smartphone = director.buildSmartphone(abstractSmartphoneBuilder);
                 final Order order = new Order(smartphone, numberOfSmartphones);
 
-                out.printf(TEMPLATE_MESSAGE_OF_ORDER_IS_CREATED,
+
+                final String messageOfCreationOrder = format(
+                        TEMPLATE_MESSAGE_OF_ORDER_IS_CREATED,
                         order.getId(),
                         order.getOderDate());
+                out.printf(messageOfCreationOrder);
+                fileSmartphoneManager.writeInformationAboutOrderIntoFile(messageOfCreationOrder);
 
                 factory.putOrderIntoQueue(order);
                 isValid = true;
